@@ -267,8 +267,8 @@ export struct GameCanvas {
           }
         }
 
-        // 随机生成新泡泡
-        if (Math.random() < 0.2 && this.bubbles.length < 35) {
+        // 随机生成新泡泡（提高生成概率和最大数量）
+        if (Math.random() < 0.4 && this.bubbles.length < 50) {
           this.addRandomBubble();
         }
       } else {

@@ -50,8 +50,8 @@ export class GameDataManager {
    */
   private initLevels(): void {
     for (let i = 1; i <= 20; i++) {
-      // 目标分数：指数增长，后期难度大幅提升
-      const targetScore = Math.floor(150 * Math.pow(1.15, i - 1));
+      // 目标分数：指数增长，后期难度大幅提升（降低基础值和增长率）
+      const targetScore = Math.floor(80 * Math.pow(1.12, i - 1));
 
       // 泡泡数量：前期少，后期多，增加点击难度（进一步减少数量以优化性能）
       const bubbleCount = 8 + Math.floor((i - 1) * 3);
