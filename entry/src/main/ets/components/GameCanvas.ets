@@ -205,10 +205,13 @@ export struct GameCanvas {
 
   startGame(): void {
     this.isPlaying = true;
-    this.initGame();
+    // 不需要重新初始化游戏，因为泡泡已经在 aboutToAppear 中生成
+    // 只需要启动计时器
     this.startTimer();
-    // 重新启动动画，确保新生成的泡泡能正常移动
-    this.startAnimation();
+    // 确保动画正在运行
+    if (this.animationTimer === -1) {
+      this.startAnimation();
+    }
   }
 
   startTimer(): void {
@@ -362,7 +365,7 @@ export struct GameCanvas {
       }
 
       this.updateParticles();
-    }, 50);
+    }, 30); // 更新间隔改为30ms，使动画更流畅（约33fps）
   }
 
   updateParticles(): void {

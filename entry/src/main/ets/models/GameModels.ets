@@ -34,7 +34,7 @@ export class Bubble {
     this.phase = Math.random() * Math.PI * 2;
 
     // 初始化随机移动参数
-    this.moveSpeed = 1.5 + Math.random() * 2.5; // 移动速度范围：1.5-4.0（增加速度）
+    this.moveSpeed = 3 + Math.random() * 4; // 移动速度范围：3-7（增加速度，使运动更明显）
     const moveAngle = Math.random() * Math.PI * 2; // 随机移动方向
     this.vx = Math.cos(moveAngle) * this.moveSpeed;
     this.vy = Math.sin(moveAngle) * this.moveSpeed;
