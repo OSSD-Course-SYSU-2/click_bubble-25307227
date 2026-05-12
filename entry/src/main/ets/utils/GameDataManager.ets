@@ -53,8 +53,8 @@ export class GameDataManager {
       // 目标分数：指数增长，后期难度大幅提升
       const targetScore = Math.floor(150 * Math.pow(1.15, i - 1));
 
-      // 泡泡数量：前期少，后期多，增加点击难度
-      const bubbleCount = 15 + Math.floor((i - 1) * 8);
+      // 泡泡数量：前期少，后期多，增加点击难度（进一步减少数量以优化性能）
+      const bubbleCount = 8 + Math.floor((i - 1) * 3);
 
       // 时间限制：前期充足，后期紧张，增加时间压力
       const timeLimit = Math.max(25, 70 - Math.floor((i - 1) * 2.5));

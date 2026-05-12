@@ -18,6 +18,9 @@ export struct GamePage {
   @State gameResult: string = '';
   @State resultScore: number = 0;
   @State equipments: Equipment[] = []; // 装备列表状态
+  @State itemCounts: Map<number, number> = new Map(); // 道具数量状态
+  @State showTip: boolean = false; // 显示提示
+  @State tipMessage: string = ''; // 提示消息内容
 
   private gameManager: GameDataManager = GameDataManager.getInstance();
 
@@ -34,6 +37,8 @@ export struct GamePage {
     this.highestScore = this.gameManager.player.highestScore;
     // 更新装备列表 - 直接引用,不需要map
     this.equipments = this.gameManager.equipments;
+    // 更新道具数量 - 创建新的Map以触发状态更新
+    this.itemCounts = new Map(this.gameManager.player.items);
   }
 
   /**
@@ -51,6 +56,18 @@ export struct GamePage {
     this.showResult = true;
     this.updatePlayerInfo();
   }
+
+  /**
+   * 显示提示消息
+   */
+  showTipMessage(message: string): void {
+    this.tipMessage = message;
+    this.showTip = true;
+    // 2秒后自动隐藏提示
+    setTimeout(() => {
+      this.showTip = false;
+    }, 2000);
+  }
   build() {
     Stack() {
       if (this.currentView === 'home') {
@@ -62,10 +79,15 @@ export struct GamePage {
       } else if (this.currentView === 'shop') {
         this.ShopView()
       }
-      
+
       // 游戏结果弹窗
       if (this.showResult) {
         this.ResultDialog()
+      }
+
+      // 提示消息弹窗
+      if (this.showTip) {
+        this.TipDialog()
       }
     }
     .width('100%')
@@ -401,7 +423,7 @@ export struct GamePage {
 
                 Blank()
 
-                Text(`拥有: ${this.gameManager.player.items.get(item.id) || 0}`)
+                Text(`拥有: ${this.itemCounts.get(item.id) || 0}`)
                   .fontSize(14)
                   .fontColor('#999')
               }
@@ -420,8 +442,11 @@ export struct GamePage {
                 .fontSize(12)
                 .backgroundColor('#4ECDC4')
                 .onClick(() => {
-                  if (this.gameManager.buyItem(item.id)) {
+                  if (this.playerCoins < item.price) {
+                    this.showTipMessage('金币不足，无法购买！');
+                  } else if (this.gameManager.buyItem(item.id)) {
                     this.updatePlayerInfo();
+                    this.showTipMessage(`成功购买 ${item.name}！`);
                   }
                 })
 
@@ -431,10 +456,10 @@ export struct GamePage {
                 .fontSize(12)
                 .backgroundColor('#FF6B6B')
                 .margin({ top: 5 })
-                .opacity((this.gameManager.player.items.get(item.id) || 0) > 0 ? 1 : 0.5)
-                .enabled((this.gameManager.player.items.get(item.id) || 0) > 0)
+                .opacity((this.itemCounts.get(item.id) || 0) > 0 ? 1 : 0.5)
+                .enabled((this.itemCounts.get(item.id) || 0) > 0)
                 .onClick(() => {
-                  // 提示在游戏中使用
+                  this.showTipMessage('请在游戏中使用道具！');
                 })
             }
             .width(70)
@@ -511,11 +536,15 @@ export struct GamePage {
                   .fontSize(12)
                   .backgroundColor('#FF6B6B')
                   .onClick(() => {
-                    if (this.gameManager.upgradeEquipment(equip.id)) {
+                    const price = equip.getUpgradePrice();
+                    if (this.playerCoins < price) {
+                      this.showTipMessage('金币不足，无法升级！');
+                    } else if (this.gameManager.upgradeEquipment(equip.id)) {
                       this.updatePlayerInfo();
+                      this.showTipMessage(`成功升级 ${equip.name}！`);
                     }
                   })
-                
+
                 Text(`💰${equip.getUpgradePrice()}`)
                   .fontSize(12)
                   .fontColor('#FFD700')
@@ -601,6 +630,27 @@ export struct GamePage {
       color: '#30000000',
       offsetX: 0,
       offsetY: 10
+    })
+  }
+
+  @Builder
+  TipDialog() {
+    Column() {
+      Text(this.tipMessage)
+        .fontSize(18)
+        .fontColor('#FFF')
+        .fontWeight(FontWeight.Bold)
+    }
+    .width('80%')
+    .height(60)
+    .justifyContent(FlexAlign.Center)
+    .backgroundColor('#FF6B6B')
+    .borderRadius(30)
+    .shadow({
+      radius: 10,
+      color: '#40000000',
+      offsetX: 0,
+      offsetY: 5
     })
   }
 

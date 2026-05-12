@@ -107,6 +107,7 @@ export struct GameCanvas {
   @State freezeActive: boolean = false;
   @State freezeTimeLeft: number = 0;
   @State luckyStarActive: boolean = false;
+  @State itemCounts: Map<number, number> = new Map(); // 道具数量状态
 
   // 连击追踪
   private comboCount: number = 0;
@@ -125,6 +126,8 @@ export struct GameCanvas {
     this.initGame();
     // 启动动画，让泡泡立即开始移动（但游戏未开始，时间不会减少）
     this.startAnimation();
+    // 初始化道具数量
+    this.updateItemCounts();
   }
 
   /**
@@ -151,6 +154,13 @@ export struct GameCanvas {
       clearInterval(this.animationTimer);
       this.animationTimer = -1;
     }
+  }
+
+  /**
+   * 更新道具数量状态
+   */
+  updateItemCounts(): void {
+    this.itemCounts = new Map(this.gameManager.player.items);
   }
 
   initGame(): void {
@@ -523,6 +533,8 @@ export struct GameCanvas {
 
     // 消耗道具
     this.gameManager.useItem(itemId);
+    // 更新道具数量状态
+    this.updateItemCounts();
     return true;
   }
 
@@ -565,14 +577,14 @@ export struct GameCanvas {
             .fontColor(this.timeLeft <= 10 ? '#FF0000' : '#333')
             .fontWeight(this.timeLeft <= 10 ? FontWeight.Bold : FontWeight.Medium)
 
-          // 提前结束按钮（达到目标分数时显示）
-          if (this.isPlaying && this.score >= this.targetScore) {
-            Button('结算')
+          // 提前退出按钮（游戏进行中显示）
+          if (this.isPlaying) {
+            Button('退出')
               .width(50)
               .height(28)
               .fontSize(12)
               .fontWeight(FontWeight.Bold)
-              .backgroundColor('#4ECDC4')
+              .backgroundColor('#FF6B6B')
               .borderRadius(14)
               .margin({ left: 8 })
               .onClick(() => {
@@ -681,16 +693,16 @@ export struct GameCanvas {
         Column() {
           Text(this.getItemIcon(item.effect))
             .fontSize(24)
-          Text(`${this.gameManager.player.items.get(item.id) || 0}`)
+          Text(`${this.itemCounts.get(item.id) || 0}`)
             .fontSize(10)
             .fontColor('#666')
         }
         .width(50)
         .height(50)
         .justifyContent(FlexAlign.Center)
-        .backgroundColor((this.gameManager.player.items.get(item.id) || 0) > 0 ? '#E8F4F8' : '#F0F0F0')
+        .backgroundColor((this.itemCounts.get(item.id) || 0) > 0 ? '#E8F4F8' : '#F0F0F0')
         .borderRadius(8)
-        .opacity((this.gameManager.player.items.get(item.id) || 0) > 0 ? 1 : 0.5)
+        .opacity((this.itemCounts.get(item.id) || 0) > 0 ? 1 : 0.5)
         .onClick(() => {
           if (this.useItem(item.id)) {
             // 道具使用成功
