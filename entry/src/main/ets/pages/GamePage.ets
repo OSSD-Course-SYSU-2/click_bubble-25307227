@@ -35,8 +35,8 @@ export struct GamePage {
     this.playerCoins = this.gameManager.player.coins;
     this.playerLevel = this.gameManager.player.currentLevel;
     this.highestScore = this.gameManager.player.highestScore;
-    // 更新装备列表 - 直接引用,不需要map
-    this.equipments = this.gameManager.equipments;
+    // 更新装备列表 - 创建新数组以触发状态更新
+    this.equipments = [...this.gameManager.equipments];
     // 更新道具数量 - 创建新的Map以触发状态更新
     this.itemCounts = new Map(this.gameManager.player.items);
   }
@@ -569,7 +569,7 @@ export struct GamePage {
           })
           .margin({ bottom: 10 })
         }
-      }, (equip: Equipment) => equip.id.toString())
+      }, (equip: Equipment) => `${equip.id}_${equip.currentLevel}`)
     }
     .width('100%')
     .layoutWeight(1)

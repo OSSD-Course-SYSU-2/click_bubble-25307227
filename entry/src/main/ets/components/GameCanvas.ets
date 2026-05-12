@@ -267,8 +267,8 @@ export struct GameCanvas {
           }
         }
 
-        // 随机生成新泡泡（提高生成概率和最大数量）
-        if (Math.random() < 0.4 && this.bubbles.length < 50) {
+        // 随机生成新泡泡（进一步提高生成概率和最大数量）
+        if (Math.random() < 0.6 && this.bubbles.length < 60) {
           this.addRandomBubble();
         }
       } else {
@@ -597,7 +597,8 @@ export struct GameCanvas {
         .backgroundColor('#F5F5F5')
 
         // 道具效果提示
-        if (this.doubleScoreActive || this.magnetActive || this.shieldActive) {
+        if (this.doubleScoreActive || this.magnetActive || this.shieldActive ||
+            this.tripleScoreActive || this.superMagnetActive || this.freezeActive || this.luckyStarActive) {
           Row() {
             if (this.doubleScoreActive) {
               Text(`⚡双倍积分 ${this.doubleScoreTimeLeft}s`)
@@ -608,11 +609,47 @@ export struct GameCanvas {
                 .borderRadius(4)
                 .margin({ right: 5 })
             }
+            if (this.tripleScoreActive) {
+              Text(`🌟三倍积分 ${this.tripleScoreTimeLeft}s`)
+                .fontSize(12)
+                .fontColor('#FF6B6B')
+                .backgroundColor('#FFE4E1')
+                .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                .borderRadius(4)
+                .margin({ right: 5 })
+            }
             if (this.magnetActive) {
               Text(`🧲磁铁 ${this.magnetTimeLeft}s`)
                 .fontSize(12)
                 .fontColor('#4ECDC4')
                 .backgroundColor('#D4EDDA')
+                .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                .borderRadius(4)
+                .margin({ right: 5 })
+            }
+            if (this.superMagnetActive) {
+              Text(`🧲超级磁铁 ${this.superMagnetTimeLeft}s`)
+                .fontSize(12)
+                .fontColor('#9B59B6')
+                .backgroundColor('#E8DAEF')
+                .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                .borderRadius(4)
+                .margin({ right: 5 })
+            }
+            if (this.freezeActive) {
+              Text(`❄️冰冻 ${this.freezeTimeLeft}s`)
+                .fontSize(12)
+                .fontColor('#3498DB')
+                .backgroundColor('#D6EAF8')
+                .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                .borderRadius(4)
+                .margin({ right: 5 })
+            }
+            if (this.luckyStarActive) {
+              Text('🍀幸运星')
+                .fontSize(12)
+                .fontColor('#27AE60')
+                .backgroundColor('#D5F4E6')
                 .padding({ left: 6, right: 6, top: 2, bottom: 2 })
                 .borderRadius(4)
                 .margin({ right: 5 })
